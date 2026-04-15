@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: ai-geopolitical-arena
+    runtime: python
+    buildCommand: pip install -r requirements.txt && python generate_results.py
+    startCommand: uvicorn backend.api.server:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+      - key: GROQ_API_KEY
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
