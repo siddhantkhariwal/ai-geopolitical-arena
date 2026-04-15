@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Geopolitical Arena</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #06060b;
+            --bg-secondary: #0d0d15;
+            --bg-card: #11111b;
+            --bg-card-hover: #16162a;
+            --border: #1e1e3a;
+            --border-bright: #2a2a5a;
+            --text-primary: #f0f0f5;
+            --text-secondary: #8888aa;
+            --text-muted: #555577;
+            --accent: #ff3366;
+            --accent-glow: rgba(255, 51, 102, 0.15);
+            --gold: #ffd700;
+            --silver: #c0c0c0;
+            --bronze: #cd7f32;
+            --blue: #4dabf7;
+            --green: #51cf66;
+            --orange: #ff922b;
+            --purple: #cc5de8;
+            --red: #ff6b6b;
+            --cyan: #22b8cf;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ========= HERO HEADER ========= */
+        .hero {
+            position: relative;
+            padding: 3.5rem 2rem 3rem;
+            text-align: center;
+            background: linear-gradient(180deg, #0a0a1a 0%, var(--bg-primary) 100%);
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255,51,102,0.12), transparent),
+                radial-gradient(ellipse 60% 40% at 20% 50%, rgba(77,171,247,0.06), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 50%, rgba(204,93,232,0.06), transparent);
+            pointer-events: none;
+        }
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255,51,102,0.1);
+            border: 1px solid rgba(255,51,102,0.3);
+            color: var(--accent);
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 0.4rem 1rem;
+            border-radius: 100px;
+            margin-bottom: 1.2rem;
+        }
+        .hero h1 {
+            font-size: 3.2rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #fff 0%, #ccc 50%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-top: 0.8rem;
+            font-weight: 400;
+        }
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            margin-top: 2rem;
+        }
+        .hero-stat {
+            text-align: center;
+        }
+        .hero-stat .num {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--blue);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .hero-stat .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+
+        /* ========= LAYOUT ========= */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+        }
+
+        /* ========= SECTION ========= */
+        .section {
+            margin-bottom: 2.5rem;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 1.2rem;
+        }
+        .section-header h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .section-header .line {
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+        .section-header .count {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ========= LEADERBOARD TABLE ========= */
+        .lb-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 4px;
+        }
+        .lb-table thead th {
+            text-align: left;
+            padding: 0.6rem 1rem;
+            font-size: 0.68rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            border: none;
+        }
+        .lb-table tbody tr {
+            background: var(--bg-card);
+            transition: all 0.2s ease;
+            cursor: default;
+        }
+        .lb-table tbody tr:hover {
+            background: var(--bg-card-hover);
+            transform: translateX(2px);
+        }
+        .lb-table tbody td {
+            padding: 0.9rem 1rem;
+            border: none;
+            vertical-align: middle;
+        }
+        .lb-table tbody tr td:first-child { border-radius: 10px 0 0 10px; }
+        .lb-table tbody tr td:last-child { border-radius: 0 10px 10px 0; }
+
+        /* Rank badges */
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .rank-1 .rank-badge { background: rgba(255,215,0,0.15); color: var(--gold); border: 1px solid rgba(255,215,0,0.3); }
+        .rank-2 .rank-badge { background: rgba(192,192,192,0.1); color: var(--silver); border: 1px solid rgba(192,192,192,0.2); }
+        .rank-3 .rank-badge { background: rgba(205,127,50,0.1); color: var(--bronze); border: 1px solid rgba(205,127,50,0.2); }
+        .rank-default .rank-badge { background: rgba(136,136,170,0.08); color: var(--text-muted); border: 1px solid var(--border); }
+
+        /* Model info cell */
+        .model-info { display: flex; flex-direction: column; gap: 2px; }
+        .model-name { font-weight: 700; font-size: 0.95rem; }
+        .model-provider { font-size: 0.72rem; color: var(--text-muted); }
+
+        /* Country flags */
+        .country-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.25rem 0.7rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.03);
+        }
+        .country-flag { font-size: 1rem; }
+
+        /* ELO */
+        .elo-score {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 1.15rem;
+        }
+        .elo-up { color: var(--green); }
+        .elo-down { color: var(--red); }
+        .elo-neutral { color: var(--blue); }
+
+        /* Record */
+        .record {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+        }
+        .record-w { color: var(--green); font-weight: 600; }
+        .record-l { color: var(--red); font-weight: 600; }
+
+        /* Hawk/Dove indicator */
+        .hd-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .hd-hawk { background: rgba(255,107,107,0.1); color: var(--red); border: 1px solid rgba(255,107,107,0.2); }
+        .hd-dove { background: rgba(81,207,102,0.1); color: var(--green); border: 1px solid rgba(81,207,102,0.2); }
+        .hd-moderate { background: rgba(255,146,43,0.1); color: var(--orange); border: 1px solid rgba(255,146,43,0.2); }
+
+        /* ========= PROFILE CARDS ========= */
+        .profiles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1rem;
+        }
+        .profile-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.4rem;
+            transition: all 0.25s ease;
+        }
+        .profile-card:hover {
+            border-color: var(--border-bright);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        .profile-header h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+        .profile-elo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--blue);
+        }
+        .dim-row {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.55rem;
+        }
+        .dim-name {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            width: 80px;
+            flex-shrink: 0;
+            text-align: right;
+        }
+        .dim-track {
+            flex: 1;
+            height: 7px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .dim-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .dim-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            width: 32px;
+            text-align: right;
+        }
+
+        /* ========= SCENARIO CARDS ========= */
+        .scenarios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1rem;
+        }
+        .scenario-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.4rem;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .scenario-card:hover {
+            border-color: var(--border-bright);
+        }
+        .scenario-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            border-radius: 14px 14px 0 0;
+        }
+        .scenario-card.type-crisis::before { background: var(--red); }
+        .scenario-card.type-diplomatic::before { background: var(--green); }
+        .scenario-card.type-resource::before { background: var(--orange); }
+        .scenario-card.type-alliance::before { background: var(--purple); }
+        .scenario-card.type-humanitarian::before { background: var(--cyan); }
+
+        .scenario-type {
+            display: inline-block;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            margin-bottom: 0.6rem;
+        }
+        .type-crisis .scenario-type { background: rgba(255,107,107,0.12); color: var(--red); }
+        .type-diplomatic .scenario-type { background: rgba(81,207,102,0.12); color: var(--green); }
+        .type-resource .scenario-type { background: rgba(255,146,43,0.12); color: var(--orange); }
+        .type-alliance .scenario-type { background: rgba(204,93,232,0.12); color: var(--purple); }
+
+        .scenario-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .scenario-card .desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 0.8rem;
+        }
+        .scenario-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .scenario-tags {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+            margin-top: 0.6rem;
+        }
+        .scenario-tags span {
+            font-size: 0.65rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.04);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+
+        /* ========= EMPTY STATE ========= */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+        .empty-state .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+        .empty-state p { font-size: 0.9rem; }
+
+        /* ========= METHODOLOGY ========= */
+        .methodology {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 2rem;
+        }
+        .methodology h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            color: var(--text-primary);
+        }
+        .methodology p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 0.8rem;
+        }
+        .methodology .dims-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+        .methodology .dim-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        .methodology .dim-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* ========= FOOTER ========= */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+        .footer a { color: var(--accent); text-decoration: none; }
+
+        /* ========= LOADING ========= */
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .skeleton {
+            background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-card-hover) 50%, var(--bg-card) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+            height: 50px;
+            margin-bottom: 4px;
+        }
+
+        /* ========= RESPONSIVE ========= */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .hero-stats { gap: 1.5rem; }
+            .hero-stat .num { font-size: 1.5rem; }
+            .container { padding: 0 1rem 3rem; }
+            .profiles-grid, .scenarios-grid { grid-template-columns: 1fr; }
+            .lb-table { font-size: 0.85rem; }
+            .lb-table thead th { padding: 0.4rem 0.5rem; font-size: 0.6rem; }
+            .lb-table tbody td { padding: 0.6rem 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ====== HERO ====== -->
+<div class="hero">
+    <div class="hero-badge">Open Source &middot; Live Rankings</div>
+    <h1>AI Geopolitical Arena</h1>
+    <p class="subtitle">Sovereign AI models from USA, China, France & UAE compete head-to-head in multiplayer war game simulations. ELO-ranked.</p>
+    <div class="hero-stats" id="heroStats">
+        <div class="hero-stat"><div class="num" id="statModels">-</div><div class="label">Models</div></div>
+        <div class="hero-stat"><div class="num" id="statCountries">-</div><div class="label">Countries</div></div>
+        <div class="hero-stat"><div class="num" id="statScenarios">-</div><div class="label">Scenarios</div></div>
+        <div class="hero-stat"><div class="num" id="statGames">-</div><div class="label">Games Played</div></div>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- ====== LEADERBOARD ====== -->
+    <div class="section">
+        <div class="section-header">
+            <h2>Leaderboard</h2>
+            <div class="line"></div>
+            <div class="count" id="lbCount"></div>
+        </div>
+        <div id="leaderboard">
+            <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+        </div>
+    </div>
+
+    <!-- ====== NATIONAL AI PROFILES ====== -->
+    <div class="section">
+        <div class="section-header">
+            <h2>National AI Profiles</h2>
+            <div class="line"></div>
+        </div>
+        <div id="profiles" class="profiles-grid"></div>
+    </div>
+
+    <!-- ====== SCENARIOS ====== -->
+    <div class="section">
+        <div class="section-header">
+            <h2>War Game Scenarios</h2>
+            <div class="line"></div>
+            <div class="count" id="scCount"></div>
+        </div>
+        <div id="scenarios" class="scenarios-grid">
+            <div class="skeleton" style="height:150px"></div>
+            <div class="skeleton" style="height:150px"></div>
+        </div>
+    </div>
+
+    <!-- ====== METHODOLOGY ====== -->
+    <div class="section">
+        <div class="section-header">
+            <h2>Methodology</h2>
+            <div class="line"></div>
+        </div>
+        <div class="methodology">
+            <h3>How It Works</h3>
+            <p>Each sovereign AI model controls a nation in a multi-turn geopolitical simulation. Models receive scenario briefings, secret national objectives, and the current world state, then choose actions each turn: negotiate, ally, trade, sanction, mobilize, attack, or de-escalate.</p>
+            <p>Games are judged on a composite score weighted across resources (military, economic, diplomatic, technology, public approval) plus alliance bonuses. Models are then rated using a dual <strong>ELO + TrueSkill</strong> system designed for multiplayer games.</p>
+            <h3 style="margin-top:1.2rem">Scoring Dimensions</h3>
+            <div class="dims-grid">
+                <div class="dim-item"><div class="dim-dot" style="background:var(--blue)"></div>Strategic Reasoning</div>
+                <div class="dim-item"><div class="dim-dot" style="background:var(--green)"></div>Diplomatic Skill</div>
+                <div class="dim-item"><div class="dim-dot" style="background:var(--orange)"></div>Economic Management</div>
+                <div class="dim-item"><div class="dim-dot" style="background:var(--purple)"></div>Ethical Reasoning</div>
+                <div class="dim-item"><div class="dim-dot" style="background:#90a4ae"></div>Consistency</div>
+                <div class="dim-item"><div class="dim-dot" style="background:var(--red)"></div>Escalation Tendency</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="footer">
+    AI Geopolitical Arena &middot; Open Source on <a href="https://github.com/siddhantkhariwal/ai-geopolitical-arena" style="color:var(--text-secondary)">GitHub</a> &middot; Inspired by <a href="https://x.com/paraschopra">@paraschopra</a> &middot; Contributions welcome: add your country's sovereign AI model
+</div>
+
+<script>
+const FLAGS = {
+    'USA': '\u{1F1FA}\u{1F1F8}', 'China': '\u{1F1E8}\u{1F1F3}', 'France': '\u{1F1EB}\u{1F1F7}',
+    'UAE': '\u{1F1E6}\u{1F1EA}', 'South Korea': '\u{1F1F0}\u{1F1F7}', 'Russia': '\u{1F1F7}\u{1F1FA}',
+    'India': '\u{1F1EE}\u{1F1F3}', 'Japan': '\u{1F1EF}\u{1F1F5}', 'Germany': '\u{1F1E9}\u{1F1EA}',
+    'Canada': '\u{1F1E8}\u{1F1E6}', 'Singapore': '\u{1F1F8}\u{1F1EC}', 'UK': '\u{1F1EC}\u{1F1E7}',
+};
+
+const DIM_COLORS = {
+    strategic_reasoning: 'var(--blue)',
+    diplomatic_skill: 'var(--green)',
+    economic_management: 'var(--orange)',
+    ethical_reasoning: 'var(--purple)',
+    consistency: '#90a4ae',
+    escalation_tendency: 'var(--red)',
+};
+
+const DIM_LABELS = {
+    strategic_reasoning: 'Strategic',
+    diplomatic_skill: 'Diplomatic',
+    economic_management: 'Economic',
+    ethical_reasoning: 'Ethical',
+    consistency: 'Consistency',
+    escalation_tendency: 'Escalation',
+};
+
+async function loadLeaderboard() {
+    try {
+        const res = await fetch('/api/leaderboard');
+        const data = await res.json();
+        const lb = data.leaderboard;
+
+        if (!lb || lb.length === 0) {
+            document.getElementById('leaderboard').innerHTML = `
+                <div class="empty-state">
+                    <div class="icon">&#9876;</div>
+                    <p>No tournament results yet. Run a tournament to see the leaderboard.</p>
+                    <p style="margin-top:0.5rem;font-size:0.8rem">python3 run_arena.py --scenario 0</p>
+                </div>`;
+            document.getElementById('profiles').innerHTML = '';
+            return;
+        }
+
+        document.getElementById('lbCount').textContent = `${lb.length} models`;
+
+        // Stats
+        const countries = new Set(lb.map(e => e.country));
+        const totalGames = lb.reduce((a, e) => a + e.games_played, 0) / 2; // each game has 2+ players
+        document.getElementById('statModels').textContent = lb.length;
+        document.getElementById('statCountries').textContent = countries.size;
+        document.getElementById('statGames').textContent = Math.round(totalGames) || '-';
+
+        // Leaderboard table
+        let html = `<table class="lb-table"><thead><tr>
+            <th style="width:50px">Rank</th><th>Model</th><th>Country</th>
+            <th>ELO</th><th>Record</th><th>Win%</th><th>Profile</th>
+        </tr></thead><tbody>`;
+
+        lb.forEach(entry => {
+            const rc = entry.rank <= 3 ? `rank-${entry.rank}` : 'rank-default';
+            const esc = entry.dimensional_scores.escalation_tendency || 50;
+            let hdClass, hdLabel;
+            if (esc > 60) { hdClass = 'hd-hawk'; hdLabel = 'Hawk'; }
+            else if (esc < 40) { hdClass = 'hd-dove'; hdLabel = 'Dove'; }
+            else { hdClass = 'hd-moderate'; hdLabel = 'Balanced'; }
+            const flag = FLAGS[entry.country] || '';
+            const w = entry.wins;
+            const l = entry.games_played - entry.wins;
+
+            html += `<tr class="${rc}">
+                <td><div class="rank-badge">${entry.rank}</div></td>
+                <td><div class="model-info"><span class="model-name">${entry.model_name}</span><span class="model-provider">${entry.model_id}</span></div></td>
+                <td><span class="country-pill"><span class="country-flag">${flag}</span>${entry.country}</span></td>
+                <td><span class="elo-score ${entry.elo >= 1500 ? 'elo-up' : entry.elo < 1500 ? 'elo-down' : 'elo-neutral'}">${entry.elo}</span></td>
+                <td><span class="record"><span class="record-w">${w}W</span> / <span class="record-l">${l}L</span></span></td>
+                <td><span style="font-family:'JetBrains Mono',monospace;font-weight:600">${entry.win_rate}%</span></td>
+                <td><span class="${hdClass} hd-indicator">${hdLabel}</span></td>
+            </tr>`;
+        });
+        html += '</tbody></table>';
+        document.getElementById('leaderboard').innerHTML = html;
+
+        // Profile cards
+        let profiles = '';
+        lb.forEach(entry => {
+            const ds = entry.dimensional_scores;
+            const flag = FLAGS[entry.country] || '';
+            let dims = '';
+            for (const [key, label] of Object.entries(DIM_LABELS)) {
+                const val = Math.min(100, Math.max(0, ds[key] || 0));
+                const color = DIM_COLORS[key];
+                dims += `<div class="dim-row">
+                    <span class="dim-name">${label}</span>
+                    <div class="dim-track"><div class="dim-fill" style="width:${val}%;background:${color}"></div></div>
+                    <span class="dim-val">${val.toFixed(0)}</span>
+                </div>`;
+            }
+            profiles += `<div class="profile-card">
+                <div class="profile-header">
+                    <h3>${flag} ${entry.model_name}</h3>
+                    <span class="profile-elo">${entry.elo}</span>
+                </div>
+                <div style="margin-bottom:0.4rem">
+                    <span class="country-pill" style="font-size:0.7rem">${entry.country}</span>
+                </div>
+                ${dims}
+            </div>`;
+        });
+        document.getElementById('profiles').innerHTML = profiles;
+
+    } catch (e) {
+        document.getElementById('leaderboard').innerHTML = `<p style="color:var(--red)">Error loading leaderboard: ${e.message}</p>`;
+    }
+}
+
+async function loadScenarios() {
+    try {
+        const res = await fetch('/api/scenarios');
+        const data = await res.json();
+        document.getElementById('scCount').textContent = `${data.scenarios.length} scenarios`;
+        document.getElementById('statScenarios').textContent = data.scenarios.length;
+
+        let html = '';
+        data.scenarios.forEach(s => {
+            const tags = s.tags.map(t => `<span>${t}</span>`).join('');
+            html += `<div class="scenario-card type-${s.type}">
+                <span class="scenario-type">${s.type}</span>
+                <h3>${s.name}</h3>
+                <p class="desc">${s.description}</p>
+                <div class="scenario-meta">
+                    <span>${s.nations.length} nations</span>
+                    <span>${s.max_turns} turns</span>
+                </div>
+                <div class="scenario-tags">${tags}</div>
+            </div>`;
+        });
+        document.getElementById('scenarios').innerHTML = html;
+    } catch (e) {
+        document.getElementById('scenarios').innerHTML = `<p style="color:var(--red)">Error loading scenarios</p>`;
+    }
+}
+
+loadLeaderboard();
+loadScenarios();
+</script>
+</body>
+</html>
