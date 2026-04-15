@@ -1,3 +1,23 @@
+---
+title: AI Geopolitical Arena
+emoji: 🌍
+colorFrom: indigo
+colorTo: red
+sdk: docker
+pinned: true
+license: mit
+short_description: Sovereign AI models in geopolitical war games. ELO.
+tags:
+  - ai
+  - llm
+  - geopolitics
+  - benchmarking
+  - elo
+  - multi-agent
+  - groq
+  - leaderboard
+---
+
 # AI Geopolitical Arena
 
 **Sovereign AI models from different nations compete in multiplayer war game simulations. ELO-ranked.**
