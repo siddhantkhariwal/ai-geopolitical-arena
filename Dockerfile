@@ -1,15 +1,20 @@
 FROM python:3.11-slim
 
+# HuggingFace Spaces requires non-root user
+RUN useradd -m -u 1000 user
 WORKDIR /app
 
-COPY requirements.txt .
+COPY --chown=user requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY --chown=user . .
 
-# Generate results if not present
+# Generate default leaderboard at build time
 RUN python generate_results.py || true
 
-EXPOSE 8000
+# HF Spaces requires port 7860
+EXPOSE 7860
 
-CMD ["uvicorn", "backend.api.server:app", "--host", "0.0.0.0", "--port", "8000"]
+USER user
+
+CMD ["uvicorn", "backend.api.server:app", "--host", "0.0.0.0", "--port", "7860"]
