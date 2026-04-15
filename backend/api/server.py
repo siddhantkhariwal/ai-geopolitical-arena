@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import subprocess
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
@@ -20,6 +21,19 @@ app = FastAPI(
     description="Sovereign AI models compete in war game simulations",
     version="0.1.0",
 )
+
+
+@app.on_event("startup")
+async def ensure_results():
+    """Generate default results if none exist."""
+    results_dir = Path("results")
+    if not results_dir.exists() or not (results_dir / "leaderboard_latest.json").exists():
+        logger.info("No results found, generating default leaderboard...")
+        try:
+            subprocess.run(["python", "generate_results.py"], check=True)
+            logger.info("Default results generated.")
+        except Exception as e:
+            logger.warning(f"Could not generate default results: {e}")
 
 app.add_middleware(
     CORSMiddleware,
