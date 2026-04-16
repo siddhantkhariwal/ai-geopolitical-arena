@@ -143,6 +143,51 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
+        /* ========= TRACK TABS ========= */
+        .track-tabs {
+            display: flex;
+            gap: 0.4rem;
+            margin-bottom: 1.4rem;
+            padding: 0.35rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: fit-content;
+        }
+        .track-tab {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            padding: 0.55rem 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+        .track-tab:hover { color: var(--text-primary); }
+        .track-tab.active {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            box-shadow: 0 1px 0 var(--border-bright) inset, 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .track-tab .dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--text-muted);
+        }
+        .track-tab.active .dot { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+        .track-tab[data-track="claude"].active .dot { background: #d97757; box-shadow: 0 0 8px #d97757; }
+        .track-sub {
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
         /* ========= LEADERBOARD TABLE ========= */
         .lb-table {
             width: 100%;
@@ -499,8 +544,16 @@
 
     <!-- ====== LEADERBOARD ====== -->
     <div class="section">
+        <div class="track-tabs" role="tablist">
+            <button class="track-tab active" data-track="open_source" role="tab">
+                <span class="dot"></span>Open Source <span class="track-sub">Groq / OpenRouter</span>
+            </button>
+            <button class="track-tab" data-track="claude" role="tab">
+                <span class="dot"></span>Claude <span class="track-sub">Anthropic</span>
+            </button>
+        </div>
         <div class="section-header">
-            <h2>Leaderboard</h2>
+            <h2 id="lbTitle">Leaderboard</h2>
             <div class="line"></div>
             <div class="count" id="lbCount"></div>
         </div>
@@ -585,9 +638,15 @@ const DIM_LABELS = {
     escalation_tendency: 'Escalation',
 };
 
-async function loadLeaderboard() {
+let currentTrack = 'open_source';
+
+async function loadLeaderboard(track = currentTrack) {
+    currentTrack = track;
+    document.getElementById('leaderboard').innerHTML = '<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
+    document.getElementById('profiles').innerHTML = '';
+    document.getElementById('lbTitle').textContent = track === 'claude' ? 'Claude Leaderboard' : 'Open Source Leaderboard';
     try {
-        const res = await fetch('/api/leaderboard');
+        const res = await fetch('/api/leaderboard?track=' + encodeURIComponent(track));
         const data = await res.json();
         const lb = data.leaderboard;
 
@@ -701,7 +760,15 @@ async function loadScenarios() {
     }
 }
 
-loadLeaderboard();
+document.querySelectorAll('.track-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.track-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        loadLeaderboard(btn.dataset.track);
+    });
+});
+
+loadLeaderboard('open_source');
 loadScenarios();
 </script>
 </body>

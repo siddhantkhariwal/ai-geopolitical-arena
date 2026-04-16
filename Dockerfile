@@ -11,6 +11,7 @@ COPY --chown=user . .
 
 # Generate default leaderboard at build time
 RUN python generate_results.py || true
+RUN python generate_claude_results.py || true
 
 # HF Spaces requires port 7860
 EXPOSE 7860

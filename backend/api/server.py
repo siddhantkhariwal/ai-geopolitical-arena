@@ -34,6 +34,12 @@ async def ensure_results():
             logger.info("Default results generated.")
         except Exception as e:
             logger.warning(f"Could not generate default results: {e}")
+    if not (results_dir / "leaderboard_claude.json").exists():
+        logger.info("No Claude results found, generating...")
+        try:
+            subprocess.run(["python", "generate_claude_results.py"], check=True)
+        except Exception as e:
+            logger.warning(f"Could not generate Claude results: {e}")
 
 app.add_middleware(
     CORSMiddleware,
@@ -53,13 +59,14 @@ async def root():
 
 
 @app.get("/api/leaderboard")
-async def get_leaderboard():
-    """Get the latest leaderboard."""
-    path = RESULTS_DIR / "leaderboard_latest.json"
+async def get_leaderboard(track: str = "open_source"):
+    """Get leaderboard for a given track ('open_source' or 'claude')."""
+    filename = "leaderboard_claude.json" if track == "claude" else "leaderboard_latest.json"
+    path = RESULTS_DIR / filename
     if not path.exists():
         return {"leaderboard": [], "message": "No tournament results yet. Run a tournament first."}
     with open(path) as f:
-        return {"leaderboard": json.load(f)}
+        return {"leaderboard": json.load(f), "track": track}
 
 
 @app.get("/api/scenarios")

@@ -134,13 +134,36 @@ PREMIUM_MODELS: list[SovereignModel] = [
         capability_tier="frontier",
         description="OpenAI's flagship model (USA)",
     ),
+]
+
+# ---------------------------------------------------------------------------
+# CLAUDE models (Anthropic frontier) — separate tab in dashboard
+# ---------------------------------------------------------------------------
+
+CLAUDE_MODELS: list[SovereignModel] = [
     SovereignModel(
-        name="Claude Sonnet 4",
+        name="Claude Haiku 4.5",
         provider="anthropic",
         country=Country.USA,
-        model_id="claude-sonnet-4-20250514",
+        model_id="claude-haiku-4-5-20251001",
         capability_tier="frontier",
-        description="Anthropic's Claude (USA)",
+        description="Anthropic's fast Haiku (USA)",
+    ),
+    SovereignModel(
+        name="Claude Sonnet 4.6",
+        provider="anthropic",
+        country=Country.USA,
+        model_id="claude-sonnet-4-6",
+        capability_tier="frontier",
+        description="Anthropic's balanced Sonnet (USA)",
+    ),
+    SovereignModel(
+        name="Claude Opus 4.7",
+        provider="anthropic",
+        country=Country.USA,
+        model_id="claude-opus-4-7",
+        capability_tier="frontier",
+        description="Anthropic's flagship Opus (USA)",
     ),
 ]
 
